@@ -72,15 +72,16 @@ jobs:
       - name: Run a multi-line script to confirm middleware's versions
         run: |
           echo $PATH
-          node -v
-          npm -v
-          python --version
-          java -version
-          go version
-          mvn -version
-          docker verdion
-          docker-compose -v
-          git version
+          echo node: `node -v`
+          echo npm: `npm -v`
+          echo python: `python --version`
+          echo java: `java -version`
+          echo mvn: `mvn -version`
+          echo docker: `docker version`
+          echo docker-compose: `docker-compose -v`
+          echo git: `git version`
+          echo go: `go version`
+
 
 
 
