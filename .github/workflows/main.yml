@@ -81,19 +81,18 @@ jobs:
 
       # ################################################################################
       # https://github.community/t/repository-name-in-environment-variable/16856/9
+      # echo "context          === ${{ toJSON(github) }}"
+      # echo "context.event    === ${{ toJSON(github.event) }}"
+      # echo "job context      === ${{ toJSON(job) }}"
+      # echo "steps context    === ${{ toJSON(steps) }}"
+      # echo "runner context   === ${{ toJSON(runner) }}"
+      # echo "strategy context === ${{ toJSON(strategy) }}"
+      # echo "matrix context   === ${{ toJSON(matrix) }}"
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
           echo "repository       === ${{ github.repository }}"
           echo "repository.name  === ${{ github.event.repository.name }}"
           echo "repository.repo  === $(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
-          #echo "context.event    === ${{ toJSON(github.event) }}"
-          #echo "==============================================================="
-          #echo "context          === ${{ toJSON(github) }}"
-          #echo "job context      === ${{ toJSON(job) }}"
-          #echo "steps context    === ${{ toJSON(steps) }}"
-          #echo "runner context   === ${{ toJSON(runner) }}"
-          #echo "strategy context === ${{ toJSON(strategy) }}"
-          #echo "matrix context   === ${{ toJSON(matrix) }}"
 
       # ################################################################################
       - name: Confirm middleware's versions
@@ -108,3 +107,4 @@ jobs:
           echo "docker-compose === docker-compose -v"
           echo "git            === git version"
           echo "go             === go version"
+          
