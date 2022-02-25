@@ -27,40 +27,32 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
-      # Reference: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-Apache-Maven
-      - name: Set up JDK 17 and Set Maven settings.xml
-        uses: actions/setup-java@v2
-        with:
-          java-version: '17'                        # The Java version to set up. Takes a whole or semver Java version. See examples of upported syntax in README file
-          distribution: 'temurin'
-          settings-path: ${{ github.workspace }}    # location for the settings.xml file(default $HOME)
-          server-id: github-public                  # Value of the distributionManagement/repository/id field of the pom.xml
-          server-username: GITHUB_ACTOR             # env variable for username in deploy
-          server-password: GITHUB_TOKEN             # env variable for token in deploy
-
-      - name: Build with Maven
-        run: mvn -B package --file pom.xml
-      
       # ################################################################################
+      # https://github.community/t/repository-name-in-environment-variable/16856/9
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
-          echo context          ===: `${{ toJSON(github) }}`
-          echo job context      ===: `${{ toJSON(job) }}`
-          echo steps context    ===: `${{ toJSON(steps) }}`
-          echo runner context   ===: `${{ toJSON(runner) }}`
-          echo strategy context ===: `${{ toJSON(strategy) }}`
-          echo matrix context   ===: `${{ toJSON(matrix) }}`
+          echo repository       === `${{ github.repository }}`
+          echo repository.repo  === `${{ github.repository }} | awk -F '/' '{print $2}'`
+          echo context.event    === `${{ toJSON(github.event) }}`
+          echo repository       === `${{ github.event.repository.name }}`
+          echo ===============================================================
+          #echo context          === `${{ toJSON(github) }}`
+          echo job context      === `${{ toJSON(job) }}`
+          echo steps context    === `${{ toJSON(steps) }}`
+          echo runner context   === `${{ toJSON(runner) }}`
+          echo strategy context === `${{ toJSON(strategy) }}`
+          echo matrix context   === `${{ toJSON(matrix) }}`
 
       # ################################################################################
       - name: Confirm middleware's versions
         run: |
-          echo $PATH
-          echo node: `node -v`
-          echo npm: `npm -v`
-          echo python: `python --version`
-          echo java: `java -version`
-          echo mvn: `mvn -version`
-          echo docker: `docker version`
-          echo docker-compose: `docker-compose -v`
-          echo git: `git version`
-          echo go: `go version`
+          echo PATH           === $PATH
+          echo node           === `node -v`
+          echo npm            === `npm -v`
+          echo python         === `python --version`
+          echo java           === `java -version`
+          echo mvn            === `mvn -version`
+          echo docker         === `docker version`
+          echo docker-compose === `docker-compose -v`
+          echo git            === `git version`
+          echo go             === `go version`
