@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.xiaobitipao</groupId>
 	<artifactId>xiaobitipao-demo-github-actions</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>xiaobitipao-demo-github-actions</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
@@ -34,8 +34,22 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
 	</build>
 
+	<distributionManagement>
+		<repository>
+			<id>github-public</id>
+			<name>GitHub OWNER Apache Maven Packages</name>
+			<url>https://maven.pkg.github.com/xiaobitipao/xiaobitipao-demo-github-actions</url>
+		</repository>
+	</distributionManagement>
 </project>
