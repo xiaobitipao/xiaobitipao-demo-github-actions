@@ -1,10 +1,14 @@
-# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+# This workflow will build a package using Maven,
+# and then publish it to GitHub packages and Docker hub when a release is created
+# For more information see: 
+# https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
+# https://github.com/marketplace/actions/build-and-push-docker-images
+# https://event-driven.io/en/how_to_buid_and_push_docker_image_with_github_actions/
 
-name: Publish Java Package with Maven to GitHub Registry
+name: Publish Java Package with Maven to GitHub Registry and Docker hub
 
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
+  # Triggers the workflow on push or pull request or release created events but only for the main branch
   push:
    branches: [ main ]
   pull_request:
@@ -27,12 +31,80 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Reference: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.    md#Publishing-using-Apache-Maven
+      - name: Set up JDK 17 and Set Maven settings.xml
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'                        # The Java version to set up. Takes a whole or semver Java version. See examples of upported syntax in README file
+          distribution: 'temurin'
+          settings-path: ${{ github.workspace }}    # location for the settings.xml file(default $HOME)
+          server-id: github-public                  # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: GITHUB_ACTOR             # env variable for username in deploy
+          server-password: GITHUB_TOKEN             # env variable for token in deploy
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      # ################################################################################
+      # Setup Docker build action
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          # Confirm other info from https://github.com/marketplace/actions/docker-login
+          #registry: ghcr.io
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Build image and push to Docker Hub and GitHub Container Registry
+        uses: docker/build-push-action@v2
+        with:
+          # relative path to the place where source code with Dockerfile is located
+          context: .
+          # Note: tags has to be all lower-case
+          #ghcr.io/oskardudycz/eventsourcing.nodejs/simple:latest
+          tags: |
+            ${{ github.event.repository.name }}:latest
+          # build on feature branches, push only on main branch
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      # ################################################################################
+      # https://github.community/t/repository-name-in-environment-variable/16856/9
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
-          echo "context.event    === ${{ toJSON(github.event) }}"
-          echo "==============================================================="
-          echo "context          === ${{ toJSON(github) }}"
-          
+          echo "repository       === ${{ github.repository }}"
+          echo "repository.name  === ${{ github.event.repository.name }}"
+          echo "repository.repo  === $(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
+          #echo "context.event    === ${{ toJSON(github.event) }}"
+          #echo "==============================================================="
+          #echo "context          === ${{ toJSON(github) }}"
+          #echo "job context      === ${{ toJSON(job) }}"
+          #echo "steps context    === ${{ toJSON(steps) }}"
+          #echo "runner context   === ${{ toJSON(runner) }}"
+          #echo "strategy context === ${{ toJSON(strategy) }}"
+          #echo "matrix context   === ${{ toJSON(matrix) }}"
 
-
- 
+      # ################################################################################
+      - name: Confirm middleware's versions
+        run: |
+          echo "PATH           === $PATH"
+          echo "node           === node -v"
+          echo "npm            === npm -v"
+          echo "python         === python --version"
+          echo "java           === java -version"
+          echo "mvn            === mvn -version"
+          echo "docker         === docker version"
+          echo "docker-compose === docker-compose -v"
+          echo "git            === git version"
+          echo "go             === go version"
