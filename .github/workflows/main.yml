@@ -33,7 +33,7 @@ jobs:
           echo "repository.name  === ${{ github.event.repository.name }}"
           echo "repository.repo  === ${{ github.repository }} | awk -F '/' '{print $2}'"
           echo "context.event    === ${{ toJSON(github.event) }}"
-          echo "===============================================================
+          echo "==============================================================="
           echo "context          === ${{ toJSON(github) }}"
           echo "job context      === ${{ toJSON(job) }}"
           echo "steps context    === ${{ toJSON(steps) }}"
