@@ -68,7 +68,7 @@ jobs:
           # Note: tags has to be all lower-case
           #ghcr.io/oskardudycz/eventsourcing.nodejs/simple:latest
           tags: |
-            xiaobitipao-demo-github-actions:0.0.2
+            docker.io/xiaobitipao/xiaobitipao-demo-github-actions:0.0.2
           # build on feature branches, push only on main branch
           push: ${{ github.ref == 'refs/heads/main' }}
 
