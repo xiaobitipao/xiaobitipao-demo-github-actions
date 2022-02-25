@@ -32,7 +32,7 @@ jobs:
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
           echo repository       === `${{ github.repository }}`
-          echo repository.repo  === `${{ github.repository }} | awk -F '/' '{print $2}'`
+          echo repository.repo  === `'${{ github.repository }}' | awk -F '/' '{print $2}'`
           echo context.event    === `${{ toJSON(github.event) }}`
           echo repository       === `${{ github.event.repository.name }}`
           echo ===============================================================
