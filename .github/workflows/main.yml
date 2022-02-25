@@ -29,12 +29,9 @@ jobs:
 
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
+          echo "context.event    === ${{ toJSON(github.event) }}"
+          echo "==============================================================="
           echo "context          === ${{ toJSON(github) }}"
-          echo "job context      === ${{ toJSON(job) }}"
-          echo "steps context    === ${{ toJSON(steps) }}"
-          echo "runner context   === ${{ toJSON(runner) }}"
-          echo "strategy context === ${{ toJSON(strategy) }}"
-          echo "matrix context   === ${{ toJSON(matrix) }}"
           
 
 
