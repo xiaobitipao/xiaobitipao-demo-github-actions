@@ -29,10 +29,12 @@ jobs:
 
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
-          echo "repository       === ${{ github.repository }}"
-          echo "repository.name  === ${{ github.event.repository.name }}"
-          echo "repository.repo  === ${{ github.repository }} | awk -F '/' '{print $2}'"
-          echo "repository.repo  === $(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
+          echo "context          === ${{ toJSON(github) }}"
+          echo "job context      === ${{ toJSON(job) }}"
+          echo "steps context    === ${{ toJSON(steps) }}"
+          echo "runner context   === ${{ toJSON(runner) }}"
+          echo "strategy context === ${{ toJSON(strategy) }}"
+          echo "matrix context   === ${{ toJSON(matrix) }}"
           
 
 
