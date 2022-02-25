@@ -33,6 +33,7 @@ jobs:
         with:
           java-version: '17'                        # The Java version to set up. Takes a whole or semver Java version. See examples of upported syntax in README file
           distribution: 'temurin'
+          settings-path: ${{ github.workspace }}    # location for the settings.xml file(default $HOME)
           server-id: github-public                  # Value of the distributionManagement/repository/id field of the pom.xml
           server-username: GITHUB_ACTOR             # env variable for username in deploy
           server-password: GITHUB_TOKEN             # env variable for token in deploy
