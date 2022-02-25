@@ -32,28 +32,7 @@ jobs:
           echo "repository       === ${{ github.repository }}"
           echo "repository.name  === ${{ github.event.repository.name }}"
           echo "repository.repo  === ${{ github.repository }} | awk -F '/' '{print $2}'"
-          echo "context.event    === ${{ toJSON(github.event) }}"
-          echo "==============================================================="
-          echo "context          === ${{ toJSON(github) }}"
-          echo "job context      === ${{ toJSON(job) }}"
-          echo "steps context    === ${{ toJSON(steps) }}"
-          echo "runner context   === ${{ toJSON(runner) }}"
-          echo "strategy context === ${{ toJSON(strategy) }}"
-          echo "matrix context   === ${{ toJSON(matrix) }}"
-
-      # ################################################################################
-      - name: Confirm middleware's versions
-        run: |
-          echo "PATH           === $PATH"
-          echo "node           === node -v"
-          echo "npm            === npm -v"
-          echo "python         === python --version"
-          echo "java           === java -version"
-          echo "mvn            === mvn -version"
-          echo "docker         === docker version"
-          echo "docker-compose === docker-compose -v"
-          echo "git            === git version"
-          echo "go             === go version"
+          echo "repository.repo  === $(echo ${{ github.repository }} | awk -F '/' '{print $2}')"
           
 
 
