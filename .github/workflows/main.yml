@@ -1,75 +1,51 @@
-## This is a basic workflow to help you get started with Actions
-#
-#name: CI
-#
-## Controls when the workflow will run
-#on:
-#  # Triggers the workflow on push or pull request events but only for the main branch
-#  push:
-#    branches: [ main ]
-#  pull_request:
-#    branches: [ main ]
-#
-#  # Allows you to run this workflow manually from the Actions tab
-#  workflow_dispatch:
-#
-## A workflow run is made up of one or more jobs that can run sequentially or in parallel
-#jobs:
-#  # This workflow contains a single job called "build"
-#  build:
-#    # The type of runner that the job will run on
-#    runs-on: ubuntu-latest
-#
-#    # Steps represent a sequence of tasks that will be executed as part of the job
-#    steps:
-#      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-#      - uses: actions/checkout@v2
-#
-#      # Runs a single command using the runners shell
-#      - name: Run a one-line script
-#        run: echo Hello, world!
-#
-#      # Runs a set of commands using the runners shell
-#      - name: Run a multi-line script
-#        run: |
-#          echo Add other actions to build,
-#          echo test, and deploy your project.
-#      - name: Setup Java JDK
-#        uses: actions/setup-java@v3.0.0
-#        with:
-#          # The Java version to set up. Takes a whole or semver Java version. See examples of supported syntax in README file
-#          java-version: 17
-#      - name: Build with Maven
-#        run: mvn -B package --file pom.xml
-#      - name: Publish to GitHub Packages Apache Maven
-#        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
-#        env:
-#          GITHUB_TOKEN: ${{ github.token }}
-#
-#
-####################################################################################
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Confirm versions
+name: Publish Java Package with Maven to GitHub Registry
 
 on:
+  # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+   branches: [ main ]
   pull_request:
-    branches: [ main ]
+   branches: [ main ]
+  release:
+    types: [created]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
     steps:
-      # Runs a set of commands using the runners shell
-      - name: Run a multi-line script to confirm middleware's versions
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Reference: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-Apache-Maven
+      - name: Set up JDK 17 and Set Maven settings.xml
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'                        # The Java version to set up. Takes a whole or semver Java version. See examples of upported syntax in README file
+          distribution: 'temurin'
+          server-id: github-public                  # Value of the distributionManagement/repository/id field of the pom.xml
+          server-username: GITHUB_ACTOR             # env variable for username in deploy
+          server-password: GITHUB_TOKEN             # env variable for token in deploy
+
+      - name: Build with Maven
+        run: mvn -B package --file pom.xml
+      
+      - name: Publish to GitHub Packages Apache Maven
+        run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+
+      - name: Confirm middleware's versions
         run: |
           echo $PATH
           echo node: `node -v`
@@ -81,7 +57,3 @@ jobs:
           echo docker-compose: `docker-compose -v`
           echo git: `git version`
           echo go: `go version`
-
-
-
-
