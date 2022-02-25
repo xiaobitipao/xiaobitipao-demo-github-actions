@@ -31,15 +31,8 @@ jobs:
       # https://github.community/t/repository-name-in-environment-variable/16856/9
       - name: Dump GitHub context/job/steps/runner/strategy/matrix
         run: |
-          echo repository       === `${{ github.event.repository.name }}`
-          echo context          === `${{ toJSON(github) }}`
-          echo context.event    === `${{ toJSON(github.event) }}`
-          echo repository       === `${{ github.event.repository.name }}`
           echo repository       === `${{ github.repository }}`
-          echo repository.repo  === `'${{ github.repository }}' | awk -F '/' '{print $2}'`
-          
-          echo ===============================================================
-          #echo context          === `${{ toJSON(github) }}`
+          echo repository.name  === `${{ github.event.repository.name }}`
 
 
  
