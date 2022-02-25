@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.xiaobitipao</groupId>
 	<artifactId>xiaobitipao-demo-github-actions</artifactId>
-	<version>0.0.2</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>xiaobitipao-demo-github-actions</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

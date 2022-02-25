@@ -107,4 +107,3 @@ jobs:
           echo "docker-compose === docker-compose -v"
           echo "git            === git version"
           echo "go             === go version"
-          
